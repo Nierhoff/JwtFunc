@@ -24,13 +24,11 @@ namespace JwtFunc
 
         private static readonly Claim[] claims = new Claim[]
             {
-                new Claim("bec.dk/legal-entity", "00019"),
-                new Claim("bec.dk/role", "clerk"),
-                new Claim("bec.dk/subtyp", "bec-clerk-alias")
+                new Claim("role", "clerk")
             };
 
-        private static readonly Claim issuer = new Claim("iss", "d365rdm.bec.dk");
-        private static readonly Claim audience = new Claim("aud", "1fb9702c-7810-48c8-9da4-81b5698c16ec");
+        private static readonly Claim issuer = new Claim("iss", "my-local.issuer.dk");
+        private static readonly Claim audience = new Claim("aud", "my-local-audience");
 
         public Function1(ILoggerFactory loggerFactory)
         {
@@ -55,9 +53,8 @@ namespace JwtFunc
         public X509Certificate2 loadCert()
         {
             string ResourcePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            //var certPem = File.ReadAllText(Path.Combine(ResourcePath, @"Resources\cert.pem"));
-            var certPem = File.ReadAllText("C:/Users/anders.nierhoff/source/repos/Jwt/Jwt/JwtFunc/Resources/cert.pem");
-            var keyPem = File.ReadAllText("C:/Users/anders.nierhoff/source/repos/Jwt/Jwt/JwtFunc/Resources/key.pem");
+            var certPem = File.ReadAllText(Path.Combine(ResourcePath, @"Resources\cert.pem.txt"));
+            var keyPem = File.ReadAllText(Path.Combine(ResourcePath, @"Resources\key.pem.txt"));
             X509Certificate2 cert = X509Certificate2.CreateFromPem(
                 keyPem: keyPem.ToCharArray(),
                 certPem: certPem.ToCharArray()
@@ -105,7 +102,7 @@ namespace JwtFunc
             {
                 ValidateIssuer = true,
                 ValidateAudience = true,
-                ValidateLifetime = true, // change for prod
+                ValidateLifetime = true,
                 ValidateIssuerSigningKey = true,
                 ValidIssuer = issuer.Value,
                 ValidAudience = audience.Value,
